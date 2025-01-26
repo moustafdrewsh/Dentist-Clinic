@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PermissionController;
@@ -35,9 +36,12 @@ Route::group(['middleware', 'useradmin' ] ,function(){
     Route::get('/panel/user/edit/{id}', [UserController::class , 'edit']);
     Route::post('/panel/user/edit/{id}', [UserController::class , 'update']);
     Route::get('/panel/user/delete/{id}', [UserController::class , 'delete']);
-    
+
+    Route::get('/languages', [LanguageController::class, 'fetchLanguages'])->name('languages.fetch.user');
+    Route::get('/language/{languageCode}', [LanguageController::class, 'setLanguage'])->name('language.set-current.user');
+
     // permissions
     Route::resource('/panel/permissions', PermissionController::class);
 });
- 
+
 
