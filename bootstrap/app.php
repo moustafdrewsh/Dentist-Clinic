@@ -1,9 +1,9 @@
 <?php
 
+use App\Http\Middleware\AdminUserMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use App\Http\Middleware\AdminUserMiddleware;
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
@@ -18,6 +18,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append:[
             \App\Http\Middleware\Localization::class,
         ]);
+
+        // $middleware->add(\Spatie\Permission\Middlewares\RoleMiddleware::class);
+
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

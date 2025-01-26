@@ -1,319 +1,230 @@
-/**
-* Template Name: NiceAdmin
-* Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
-* Updated: Apr 20 2024 with Bootstrap v5.3.3
-* Author: BootstrapMade.com
-* License: https://bootstrapmade.com/license/
-*/
-
-(function() {
+(function () {
   "use strict";
 
-  /**
-   * Easy selector helper function
-   */
-  const select = (el, all = false) => {
-    el = el.trim()
-    if (all) {
-      return [...document.querySelectorAll(el)]
-    } else {
-      return document.querySelector(el)
+  if (localStorage.getItem("vexeldarktheme")) {
+    document.querySelector("html").setAttribute("data-theme-mode", "dark");
+    document.querySelector("html").setAttribute("data-menu-styles", "dark");
+    document.querySelector("html").setAttribute("data-header-styles", "dark");
+  }
+  if (localStorage.vexelrtl) {
+    let html = document.querySelector("html");
+    html.setAttribute("dir", "rtl");
+    document.querySelector("#style")?.setAttribute("href","../assets/libs/bootstrap/css/bootstrap.rtl.min.css");
+  }
+   if (localStorage.vexellayout) {
+    let html = document.querySelector('html');
+    html.setAttribute("data-nav-layout", "horizontal");
+    document.querySelector("html").setAttribute("data-menu-styles", "light")
+}
+if (localStorage.getItem("vexellayout") == "horizontal") {
+    document.querySelector("html").setAttribute("data-nav-layout", "horizontal")
+}
+
+  if (localStorage.loaderEnable == "true") {
+    document.querySelector("html").setAttribute("loader", "enable");
+  } else {
+    if (!document.querySelector("html").getAttribute("loader")) {
+      document.querySelector("html").setAttribute("loader", "disable");
     }
   }
 
-  /**
-   * Easy event listener function
-   */
-  const on = (type, el, listener, all = false) => {
-    if (all) {
-      select(el, all).forEach(e => e.addEventListener(type, listener))
-    } else {
-      select(el, all).addEventListener(type, listener)
+  function localStorageBackup() {
+    // if there is a value stored, update color picker and background color
+    // Used to retrive the data from local storage
+    if (localStorage.primaryRGB) {
+      if (document.querySelector(".theme-container-primary")) {
+        document.querySelector(".theme-container-primary").value =
+          localStorage.primaryRGB;
+      }
+      document
+        .querySelector("html")
+        .style.setProperty("--primary-rgb", localStorage.primaryRGB);
     }
-  }
-
-  /**
-   * Easy on scroll event listener 
-   */
-  const onscroll = (el, listener) => {
-    el.addEventListener('scroll', listener)
-  }
-
-  /**
-   * Sidebar toggle
-   */
-  if (select('.toggle-sidebar-btn')) {
-    on('click', '.toggle-sidebar-btn', function(e) {
-      select('body').classList.toggle('toggle-sidebar')
-    })
-  }
-
-  /**
-   * Search bar toggle
-   */
-  if (select('.search-bar-toggle')) {
-    on('click', '.search-bar-toggle', function(e) {
-      select('.search-bar').classList.toggle('search-bar-show')
-    })
-  }
-
-  /**
-   * Navbar links active state on scroll
-   */
-  let navbarlinks = select('#navbar .scrollto', true)
-  const navbarlinksActive = () => {
-    let position = window.scrollY + 200
-    navbarlinks.forEach(navbarlink => {
-      if (!navbarlink.hash) return
-      let section = select(navbarlink.hash)
-      if (!section) return
-      if (position >= section.offsetTop && position <= (section.offsetTop + section.offsetHeight)) {
-        navbarlink.classList.add('active')
-      } else {
-        navbarlink.classList.remove('active')
+    if (localStorage.bodyBgRGB && localStorage.bodylightRGB) {
+      if (document.querySelector(".theme-container-background")) {
+        document.querySelector(".theme-container-background").value =
+          localStorage.bodyBgRGB;
       }
-    })
-  }
-  window.addEventListener('load', navbarlinksActive)
-  onscroll(document, navbarlinksActive)
-
-  /**
-   * Toggle .header-scrolled class to #header when page is scrolled
-   */
-  let selectHeader = select('#header')
-  if (selectHeader) {
-    const headerScrolled = () => {
-      if (window.scrollY > 100) {
-        selectHeader.classList.add('header-scrolled')
-      } else {
-        selectHeader.classList.remove('header-scrolled')
-      }
+      document
+        .querySelector("html")
+        .style.setProperty("--body-bg-rgb", localStorage.bodyBgRGB);
+      document
+        .querySelector("html")
+        .style.setProperty("--body-bg-rgb2", localStorage.bodyBgRGB2);
+      document
+        .querySelector("html")
+        .style.setProperty("--light-rgb", localStorage.bodylightRGB);
+      document
+        .querySelector("html")
+        .style.setProperty(
+          "--form-control-bg",
+          `rgb(${localStorage.bodylightRGB})`
+        );
+      document
+        .querySelector("html")
+        .style.setProperty("--input-border", "rgba(255,255,255,0.1)");
+      let html = document.querySelector("html");
+      html.setAttribute("data-theme-mode", "dark");
+      html.setAttribute("data-menu-styles", "dark");
+      html.setAttribute("data-header-styles", "dark");
     }
-    window.addEventListener('load', headerScrolled)
-    onscroll(document, headerScrolled)
-  }
-
-  /**
-   * Back to top button
-   */
-  let backtotop = select('.back-to-top')
-  if (backtotop) {
-    const toggleBacktotop = () => {
-      if (window.scrollY > 100) {
-        backtotop.classList.add('active')
-      } else {
-        backtotop.classList.remove('active')
-      }
+    if (localStorage.vexelMenu == "dark") {
+      let html = document.querySelector("html");
+      html.setAttribute("data-theme-mode", "dark");
     }
-    window.addEventListener('load', toggleBacktotop)
-    onscroll(document, toggleBacktotop)
-  }
+    if (localStorage.getItem("vexelHeader") == "dark") {
+      let html = document.querySelector("html");
+      html.setAttribute("data-header-styles", "dark");
+    }
+    if (localStorage.vexellayout) {
+      let html = document.querySelector("html");
+      let layoutValue = localStorage.getItem("vexellayout");
+      html.setAttribute("data-nav-layout", "horizontal");
 
-  /**
-   * Initiate tooltips
-   */
-  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-  var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-    return new bootstrap.Tooltip(tooltipTriggerEl)
-  })
-
-  /**
-   * Initiate quill editors
-   */
-  if (select('.quill-editor-default')) {
-    new Quill('.quill-editor-default', {
-      theme: 'snow'
-    });
-  }
-
-  if (select('.quill-editor-bubble')) {
-    new Quill('.quill-editor-bubble', {
-      theme: 'bubble'
-    });
-  }
-
-  if (select('.quill-editor-full')) {
-    new Quill(".quill-editor-full", {
-      modules: {
-        toolbar: [
-          [{
-            font: []
-          }, {
-            size: []
-          }],
-          ["bold", "italic", "underline", "strike"],
-          [{
-              color: []
-            },
-            {
-              background: []
-            }
-          ],
-          [{
-              script: "super"
-            },
-            {
-              script: "sub"
-            }
-          ],
-          [{
-              list: "ordered"
-            },
-            {
-              list: "bullet"
-            },
-            {
-              indent: "-1"
-            },
-            {
-              indent: "+1"
-            }
-          ],
-          ["direction", {
-            align: []
-          }],
-          ["link", "image", "video"],
-          ["clean"]
-        ]
-      },
-      theme: "snow"
-    });
-  }
-
-  /**
-   * Initiate TinyMCE Editor
-   */
-
-  const useDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const isSmallScreen = window.matchMedia('(max-width: 1023.5px)').matches;
-
-  tinymce.init({
-    selector: 'textarea.tinymce-editor',
-    plugins: 'preview importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons accordion',
-    editimage_cors_hosts: ['picsum.photos'],
-    menubar: 'file edit view insert format tools table help',
-    toolbar: "undo redo | accordion accordionremove | blocks fontfamily fontsize | bold italic underline strikethrough | align numlist bullist | link image | table media | lineheight outdent indent| forecolor backcolor removeformat | charmap emoticons | code fullscreen preview | save print | pagebreak anchor codesample | ltr rtl",
-    autosave_ask_before_unload: true,
-    autosave_interval: '30s',
-    autosave_prefix: '{path}{query}-{id}-',
-    autosave_restore_when_empty: false,
-    autosave_retention: '2m',
-    image_advtab: true,
-    link_list: [{
-        title: 'My page 1',
-        value: 'https://www.tiny.cloud'
-      },
-      {
-        title: 'My page 2',
-        value: 'http://www.moxiecode.com'
-      }
-    ],
-    image_list: [{
-        title: 'My page 1',
-        value: 'https://www.tiny.cloud'
-      },
-      {
-        title: 'My page 2',
-        value: 'http://www.moxiecode.com'
-      }
-    ],
-    image_class_list: [{
-        title: 'None',
-        value: ''
-      },
-      {
-        title: 'Some class',
-        value: 'class-name'
-      }
-    ],
-    importcss_append: true,
-    file_picker_callback: (callback, value, meta) => {
-      /* Provide file and text for the link dialog */
-      if (meta.filetype === 'file') {
-        callback('https://www.google.com/logos/google.jpg', {
-          text: 'My text'
-        });
-      }
-
-      /* Provide image and alt text for the image dialog */
-      if (meta.filetype === 'image') {
-        callback('https://www.google.com/logos/google.jpg', {
-          alt: 'My alt text'
-        });
-      }
-
-      /* Provide alternative source and posted for the media dialog */
-      if (meta.filetype === 'media') {
-        callback('movie.mp4', {
-          source2: 'alt.ogg',
-          poster: 'https://www.google.com/logos/google.jpg'
-        });
-      }
-    },
-    height: 600,
-    image_caption: true,
-    quickbars_selection_toolbar: 'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
-    noneditable_class: 'mceNonEditable',
-    toolbar_mode: 'sliding',
-    contextmenu: 'link image table',
-    skin: useDarkMode ? 'oxide-dark' : 'oxide',
-    content_css: useDarkMode ? 'dark' : 'default',
-    content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:16px }'
-  });
-
-  /**
-   * Initiate Bootstrap validation check
-   */
-  var needsValidation = document.querySelectorAll('.needs-validation')
-
-  Array.prototype.slice.call(needsValidation)
-    .forEach(function(form) {
-      form.addEventListener('submit', function(event) {
-        if (!form.checkValidity()) {
-          event.preventDefault()
-          event.stopPropagation()
+      setTimeout(() => {
+        if (!document.querySelector(".login-img")) {
+          clearNavDropdown();
         }
+      }, 1000);
+      html.setAttribute("data-nav-style", "menu-click");
 
-        form.classList.add('was-validated')
-      }, false)
-    })
-
-  /**
-   * Initiate Datatables
-   */
-  const datatables = select('.datatable', true)
-  datatables.forEach(datatable => {
-    new simpleDatatables.DataTable(datatable, {
-      perPageSelect: [5, 10, 15, ["All", -1]],
-      columns: [{
-          select: 2,
-          sortSequence: ["desc", "asc"]
-        },
-        {
-          select: 3,
-          sortSequence: ["desc"]
-        },
-        {
-          select: 4,
-          cellClass: "green",
-          headerClass: "red"
+      setTimeout(() => {
+        if (!document.querySelector(".login-img")) {
+          checkHoriMenu();
         }
-      ]
-    });
-  })
+      }, 1000);
+    }
+    if (localStorage.vexelverticalstyles) {
+      let html = document.querySelector("html");
+      let verticalStyles = localStorage.getItem("vexelverticalstyles");
 
-  /**
-   * Autoresize echart charts
-   */
-  const mainContainer = select('#main');
-  if (mainContainer) {
-    setTimeout(() => {
-      new ResizeObserver(function() {
-        select('.echart', true).forEach(getEchart => {
-          echarts.getInstanceByDom(getEchart).resize();
-        })
-      }).observe(mainContainer);
-    }, 200);
+      if (verticalStyles == "default") {
+        html.setAttribute("data-vertical-style", "default");
+        localStorage.removeItem("vexelnavstyles");
+      }
+      if (verticalStyles == "closed") {
+        html.setAttribute("data-vertical-style", "closed");
+        localStorage.removeItem("vexelnavstyles");
+      }
+      if (verticalStyles == "icontext") {
+        html.setAttribute("data-vertical-style", "icontext");
+        localStorage.removeItem("vexelnavstyles");
+      }
+      if (verticalStyles == "overlay") {
+        html.setAttribute("data-vertical-style", "overlay");
+        localStorage.removeItem("vexelnavstyles");
+      }
+      if (verticalStyles == "detached") {
+        html.setAttribute("data-vertical-style", "detached");
+        localStorage.removeItem("vexelnavstyles");
+      }
+      if (verticalStyles == "doublemenu") {
+        html.setAttribute("data-vertical-style", "doublemenu");
+        localStorage.removeItem("vexelnavstyles");
+      }
+    }
+    if (localStorage.vexelnavstyles) {
+      let html = document.querySelector("html");
+      let navStyles = localStorage.getItem("vexelnavstyles");
+      if (navStyles == "menu-click") {
+        html.setAttribute("data-nav-style", "menu-click");
+        localStorage.removeItem("vexelverticalstyles");
+        html.removeAttribute("data-vertical-style");
+      }
+      if (navStyles == "menu-hover") {
+        html.setAttribute("data-nav-style", "menu-hover");
+        localStorage.removeItem("vexelverticalstyles");
+        html.removeAttribute("data-vertical-style");
+      }
+      if (navStyles == "icon-click") {
+        html.setAttribute("data-nav-style", "icon-click");
+        localStorage.removeItem("vexelverticalstyles");
+        html.removeAttribute("data-vertical-style");
+      }
+      if (navStyles == "icon-hover") {
+        html.setAttribute("data-nav-style", "icon-hover");
+        localStorage.removeItem("vexelverticalstyles");
+        html.removeAttribute("data-vertical-style");
+      }
+    }
+    if (localStorage.vexelclassic) {
+      let html = document.querySelector("html");
+      html.setAttribute("data-page-style", "classic");
+    }
+    if (localStorage.vexelboxed) {
+      let html = document.querySelector("html");
+      html.setAttribute("data-width", "boxed");
+    }
+    if (localStorage.vexelheaderfixed) {
+      let html = document.querySelector("html");
+      html.setAttribute("data-header-position", "fixed");
+    }
+    if (localStorage.vexelheaderscrollable) {
+      let html = document.querySelector("html");
+      html.setAttribute("data-header-position", "scrollable");
+    }
+    if (localStorage.vexelmenufixed) {
+      let html = document.querySelector("html");
+      html.setAttribute("data-menu-position", "fixed");
+    }
+    if (localStorage.vexelmenuscrollable) {
+      let html = document.querySelector("html");
+      html.setAttribute("data-menu-position", "scrollable");
+    }
+    if (localStorage.vexelMenu) {
+      let html = document.querySelector("html");
+      let menuValue = localStorage.getItem("vexelMenu");
+      switch (menuValue) {
+        case "light":
+          html.setAttribute("data-menu-styles", "light");
+          break;
+        case "dark":
+          html.setAttribute("data-menu-styles", "dark");
+          break;
+        case "color":
+          html.setAttribute("data-menu-styles", "color");
+          break;
+        case "gradient":
+          html.setAttribute("data-menu-styles", "gradient");
+          break;
+        case "transparent":
+          html.setAttribute("data-menu-styles", "transparent");
+          break;
+        default:
+          break;
+      }
+    }
+    if (localStorage.vexelHeader) {
+      let html = document.querySelector("html");
+      let headerValue = localStorage.getItem("vexelHeader");
+      switch (headerValue) {
+        case "light":
+          html.setAttribute("data-header-styles", "light");
+          break;
+        case "dark":
+          html.setAttribute("data-header-styles", "dark");
+          break;
+        case "color":
+          html.setAttribute("data-header-styles", "color");
+          break;
+        case "gradient":
+          html.setAttribute("data-header-styles", "gradient");
+          break;
+        case "transparent":
+          html.setAttribute("data-header-styles", "transparent");
+          break;
+
+        default:
+          break;
+      }
+    }
+    if (localStorage.bgimg) {
+      let html = document.querySelector("html");
+      let value = localStorage.getItem("bgimg");
+      html.setAttribute("data-bg-img", value);
+    }
   }
-
+  localStorageBackup();
 })();
+
+
