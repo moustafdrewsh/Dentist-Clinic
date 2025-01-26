@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\RolePermissionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NotificationSettingController;
+use App\Http\Controllers\SettingController;
 
 
 
@@ -22,8 +23,13 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/notifications', [NotificationSettingController::class, 'index'])->name('admin.notifications.index');
     Route::put('/notifications/update', [NotificationSettingController::class, 'update'])->name('admin.notifications.update');
     Route::get('/notifications/test', [NotificationSettingController::class, 'test'])->name('admin.notifications.test');
-    
+    Route::get('/notifications/testsms', [NotificationSettingController::class, 'testsms'])->name('admin.notifications.testsms');
 
+
+    Route::get('settings', [SettingController::class, 'index'])->name('admin.settings.index');
+    Route::post('settings/update', [SettingController::class, 'store'])->name('admin.settings.store');
+
+    
 });
 
 // use App\Services\NotificationService;

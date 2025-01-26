@@ -35,6 +35,9 @@
                  <li class="slide">
                     <a href="{{ route('admin.notifications.index') }}" class="side-menu__item">إدارة الاشعارات </a>
                 </li>
+                <li class="slide">
+                    <a href="{{ route('admin.settings.index') }}" class="side-menu__item">إدارة الاعدادات </a>
+                </li>
                 @endrole
                
 

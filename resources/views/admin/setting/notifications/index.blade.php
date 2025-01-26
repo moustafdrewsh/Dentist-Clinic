@@ -87,8 +87,13 @@
                             <button type="submit" class="btn btn-success">تحديث الإعدادات</button>
                             
                             <a href="{{ route('admin.notifications.test') }}" class="btn btn-secondary">
-                            تجريب
+                          email   تجريب
                                 </a>
+                                
+                            <a href="{{ route('admin.notifications.testsms') }}" class="btn btn-secondary">
+                                sms تجريب
+                                    </a>
+                                    
                             <a href="{{ route('admin.notifications.index') }}" class="btn btn-secondary">رجوع إلى
                                 الإعدادات</a>
                         </div>

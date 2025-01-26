@@ -46,7 +46,14 @@ class NotificationSettingController extends Controller
 public function test(){
 
     // $user = Auth::user();
-    NotificationService::cheackNotfication('register',  'Welcome to our platform!');
+    NotificationService::cheackNotfication('login-email', 'email', 'لقد قمت بتسجيل الدخول بنجاح!');
+
+}
+
+public function testsms(){
+
+   
+    NotificationService::cheackNotfication('login-sms', 'sms', 'لقد قمت بتسجيل الدخول بنجاح!');
 
 }
 

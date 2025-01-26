@@ -7,44 +7,58 @@ use App\Models\NotificationSetting;
 use App\Models\NotificationType;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Twilio\Rest\Client;
 
 class NotificationService
 {
     // notficationSetting -> 
 
 
-    public static function cheackNotfication($type, $message)
+    public static function cheackNotfication($type, $method, $message)
     {
+        $notificationType = NotificationType::where('name', $method)->first();
+    
+        if (!$notificationType) {
+            Log::error("NotificationType '{$method}' is missing in the database.");
+            return; 
+        }
+    
+        $notificationSetting = NotificationSetting::where('notification_type_id', $notificationType->id)
+            ->where('notification_type', $type)
+            ->first();
+    
+        if (!$notificationSetting) {
+            NotificationSetting::updateOrCreate(
+                [
+                    'notification_type' => $type, 
+                    'notification_type_id' => $notificationType->id,
+                ],
+                [
+                    'enabled' => true,
+                ]
+            );
+        }
+    
+        if ($notificationSetting && $notificationSetting->enabled) {
+            if ($notificationSetting->notification_type === 'email') {
+                self::sendEmailNotificationRegister($method, $message);
+            } elseif ($notificationSetting->notification_type === 'sms') {
+                $toPhoneNumber = $notificationSetting->phone_number ?? env('TWILIO_PHONE_NUMBER');
 
-        // notification_type
-        // parint
-        // sms - email - pusher 
-        $notficationSettings = NotificationSetting::where('notification_type', $type)->get();
-        foreach ($notficationSettings as $notificationSetting) {
-
-
-            if ($notificationSetting->notification_type == 'email' && $notificationSetting->enabled) {
-
-                self::sendEmailNotificationRegister( $message);
-            }
-
-            if ($notificationSetting->notification_type == 'pusher' && $notificationSetting->enabled) {
-
-                // self::sendPusherNotification($user, $message);
-            }
-            if ($notificationSetting->notification_type == 'sms' && $notificationSetting->enabled) {
-
-                // self::sendSMSNotification($user, $message);
+                self::sendSMSNotification($toPhoneNumber, $message);
+            } elseif ($notificationSetting->notification_type === 'pusher') {
+                self::sendPusherNotification(null, $message);
             }
         }
-        self::storeNotificationType($type);
     }
-
+    
+    
 
     // email
-    public static function sendEmailNotificationRegister($message)
+    public static function sendEmailNotificationRegister($type, $message)
     {
         Mail::to('moustaf.drewsh099@gmail.com')->send(new GenericNotification($message));
+        self::storeNotificationType($type, 'email');
     }
 
 
@@ -59,27 +73,53 @@ class NotificationService
 
 
     // sms
-    public static function sendSMSNotification($user, $message)
+    public static function sendSMSNotification($toPhoneNumber, $message)
     {
-        // تحقق مما إذا كنت تستخدم Pusher، ثم أرسل الإشعار عبر Pusher
-        // تأكد من تكامل Pusher مع التطبيق لديك
-        // مثال بسيط:
-        // broadcast(new \App\Events\NotificationEvent($user, $message)); 
+        try {
+            $sid = env('TWILIO_SID');
+            $authToken = env('TWILIO_AUTH_TOKEN');
+            $twilioNumber = env('TWILIO_PHONE_NUMBER');
+
+            if (!$sid || !$authToken || !$twilioNumber) {
+                throw new \Exception('Twilio credentials are not set in the .env file.');
+            }
+
+            $client = new Client($sid, $authToken);
+
+            $client->messages->create(
+                $toPhoneNumber,
+                [
+                    'from' => $twilioNumber,
+                    'body' => $message,
+                ]
+            );
+
+            Log::info("SMS sent to {$toPhoneNumber}: {$message}");
+        } catch (\Exception $e) {
+            Log::error("Failed to send SMS via Twilio: " . $e->getMessage());
+        }
     }
 
-
-
-
-
-    public static function storeNotificationType($notificationType)
+    public static function storeNotificationType($type, $method = null)
     {
-        $notificationTypeObj = NotificationType::firstOrCreate(['name' => $notificationType]);
-
+        $notificationTypeObj = NotificationType::where('name', $type)->first();
+    
+        if (!$notificationTypeObj) {
+            Log::error("NotificationType '{$type}' is missing in the database.");
+            return; // لا تُنشئ القيم تلقائيًا
+        }
+    
         NotificationSetting::updateOrCreate(
-            ['notification_type' => $notificationTypeObj->name],
-            ['enabled' => true, 'notification_type_id' => $notificationTypeObj->id]
+            [
+                'notification_type' => $method ?? $type,
+                'notification_type_id' => $notificationTypeObj->id,
+            ],
+            [
+                'enabled' => true,
+            ]
         );
     }
+    
     public static function logNotification($user, $message)
     {
         Log::info("Notification sent to {$user->email}: {$message}");
