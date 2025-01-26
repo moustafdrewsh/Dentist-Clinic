@@ -10,6 +10,25 @@ use RuntimeException;
 
 class FileService
 {
+        /**
+     * @param $requestFile
+     * @param $folder
+     * @return string
+     */
+    public static function upload($requestFile, $folder)
+    {
+        $file_name = uniqid('', true) . time() . '.' . $requestFile->getClientOriginalExtension();
+        $folderes = 'images/' . $folder;
+        $uploadPath = public_path($folderes);
+
+        if (!file_exists($uploadPath)) {
+            mkdir($uploadPath, 0777, true);
+        }
+
+        $requestFile->move($uploadPath, $file_name);
+
+        return $folder . '/' . $file_name;
+    }
     /**
      * @param $requestFile
      * @param $code

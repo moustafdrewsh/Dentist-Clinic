@@ -37,10 +37,19 @@ Route::group(['middleware', 'useradmin' ] ,function(){
     Route::post('/panel/user/edit/{id}', [UserController::class , 'update']);
     Route::get('/panel/user/delete/{id}', [UserController::class , 'delete']);
 
+    Route::prefix('languages')->group(function () {
+        Route::get('/', [LanguageController::class, 'index'])->name('languages.index');
+        Route::get('/create', [LanguageController::class, 'create'])->name('languages.create');
+        Route::post('/', [LanguageController::class, 'store'])->name('languages.store');
+        Route::get('/{id}/edit', [LanguageController::class, 'edit'])->name('languages.edit');
+        Route::put('/{language}', [LanguageController::class, 'update'])->name('languages.update');
+        Route::delete('/{language}', [LanguageController::class, 'destroy'])->name('languages.destroy');
+    });
+
     Route::get('/languages', [LanguageController::class, 'fetchLanguages'])->name('languages.fetch.user');
     Route::get('/language/{languageCode}', [LanguageController::class, 'setLanguage'])->name('language.set-current.user');
 
-    // permissions
+
     Route::resource('/panel/permissions', PermissionController::class);
 });
 

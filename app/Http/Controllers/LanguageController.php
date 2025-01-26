@@ -16,227 +16,97 @@ class LanguageController extends Controller
     public function __construct() {
         $this->uploadFolder = "language";
     }
-
-    public function store(Request $request) {
-        $validator = Validator::make($request->all(), [
-            'name'            => 'required',
-            'name_in_english' => 'required|regex:/^[\pL\s]+$/u',
-            'code'            => 'required|unique:languages,code',
-            'rtl'             => 'nullable',
-            'image'           => 'required|mimes:jpeg,png,jpg,svg|max:2048',
-        ]);
-        if ($validator->fails()) {
-            ResponseService::validationError($validator->errors()->first());
-        }
-            $data = $request->all();
-            $data['rtl'] = $request->rtl == "on";
-
-            if ($request->hasFile('panel_file')) {
-                $data['panel_file'] = FileService::uploadLanguageFile($request->file('panel_file'), $request->code);
-            }
-
-            if ($request->hasFile('app_file')) {
-                $data['app_file'] = FileService::uploadLanguageFile($request->file('app_file'), $request->code . "_app");
-            }
-
-            if ($request->hasFile('web_file')) {
-                $data['web_file'] = FileService::uploadLanguageFile($request->file('web_file'), $request->code . "_web");
-            }
-
-            if ($request->hasFile('image')) {
-                $data['image'] = FileService::upload($request->file('image'), $this->uploadFolder);
-            }
-
-            Language::create($data);
-    }
-    public function show(Request $request)
+    // عرض قائمة اللغات
+    public function index(Request $request)
     {
-        $offset = $request->offset ?? 0;
-        $limit = $request->limit ?? 10;
-        $sort = $request->sort ?? 'id';
-        $order = $request->order ?? 'DESC';
-
-        $sql = Language::orderBy($sort, $order);
-
-        if (!empty($_GET['search'])) {
-            $search = $_GET['search'];
-            $sql->where('id', 'LIKE', "%$search%")->orwhere('code', 'LIKE', "%$search%")->orwhere('name', 'LIKE', "%$search%");
-        }
-        $total = $sql->count();
-        $sql->skip($offset)->take($limit);
-        $result = $sql->get();
-        $bulkData = array();
-        $bulkData['total'] = $total;
-        $rows = array();
-        foreach ($result as $key => $row) {
-            $tempRow = $row->toArray();
-            $tempRow['rtl_text'] = ($row->rtl == 1) ? "Yes" : "No";
-            $operate = '';
-            if ($row->code != "en") {
-                $operate .= BootstrapTableService::editButton(route('language.update', $row->id), true);
-                $operate .= BootstrapTableService::deleteButton(route('language.destroy', $row->id));
-            }
-            $dropdownItems = [
-                [
-                    'icon' => '',
-                    'url' => route('languageedit', [$row->id, 'type' => 'panel']),
-                    'text' => 'Edit Panel Json'
-                ],
-                [
-                    'icon' => '',
-                    'url' => route('languageedit', [$row->id, 'type' => 'web']),
-                    'text' => 'Edit Web Json'
-                ],
-                [
-                    'icon' => '',
-                    'url' => route('languageedit', [$row->id, 'type' => 'app']),
-                    'text' => 'Edit App Json'
-                ]
-            ];
-
-            $operate .= BootstrapTableService::dropdown('fas fa-ellipsis-v', $dropdownItems);
-
-            $tempRow['operate'] = $operate;
-            $rows[] = $tempRow;
-        }
-
-        $bulkData['rows'] = $rows;
-        return response()->json($bulkData);
+        $languages = Language::paginate(10);
+        return view('languages.index', compact('languages'));
     }
 
-    public function update(Request $request, $id) {
-        $validator = Validator::make($request->all(), [
-            'name'            => 'required',
-            'name_in_english' => 'required|regex:/^[\pL\s]+$/u',
-            'code'            => 'required|unique:languages,code,' . $id,
-            'rtl'             => 'required|boolean',
-            'app_file'        => 'nullable|mimes:json',
-            'panel_file'      => 'nullable|mimes:json',
-            'web_file'        => 'nullable|mimes:json',
-            'image'           => 'nullable|mimes:jpeg,png,jpg,svg|max:2048',
+    // عرض نموذج الإضافة
+    public function create()
+    {
+        return view('languages.create');
+    }
+
+    // تخزين لغة جديدة
+    public function store(Request $request)
+    {
+        $data = $request->validated();
+
+        // رفع الملفات المختلفة
+        if ($request->hasFile('panel_file')) {
+            $data['panel_file'] = FileService::uploadLanguageFile($request->file('panel_file'), $request->code);
+        }
+
+        if ($request->hasFile('app_file')) {
+            $data['app_file'] = FileService::uploadLanguageFile($request->file('app_file'), $request->code . "_app");
+        }
+
+        if ($request->hasFile('web_file')) {
+            $data['web_file'] = FileService::uploadLanguageFile($request->file('web_file'), $request->code . "_web");
+        }
+
+        if ($request->hasFile('image')) {
+            $data['image'] = FileService::upload($request->file('image'), $this->uploadFolder);
+        }
+
+        // حفظ البيانات في قاعدة البيانات
+        $language = Language::create($data);
+
+        return response()->json([
+            'message' => 'تم إضافة اللغة بنجاح.',
+            'language' => $language
         ]);
-        if ($validator->fails()) {
-            ResponseService::validationError($validator->errors()->first());
-        }
-            $language = Language::findOrFail($id);
-            $data = $request->all();
-
-            if ($request->hasFile('panel_file')) {
-                $data['panel_file'] = FileService::uploadLanguageFile($request->file('panel_file'), $language->code);
-            }
-            if ($request->hasFile('app_file')) {
-                $data['app_file'] = FileService::uploadLanguageFile($request->file('app_file'), $language->code . "_app");
-            }
-
-            if ($request->hasFile('web_file')) {
-                $data['web_file'] = FileService::uploadLanguageFile($request->file('web_file'), $language->code."_web");
-            }
-
-            if ($request->hasFile('image')) {
-                $data['image'] = FileService::replace($request->file('image'), $this->uploadFolder, $language->getRawOriginal('image'));
-            }
-            $language->update($data);
     }
-
-
-    public function destroy($id) {
-
-            $language = Language::findOrFail($id);
-            $language->delete();
-            FileService::deleteLanguageFile($language->app_file);
-            FileService::deleteLanguageFile($language->panel_file);
-            FileService::deleteLanguageFile($language->web_file);
-            FileService::delete($language->getRawOriginal('image'));
-    }
-
-    public function editlanguage(Request $request, $id, $type)
+    // عرض نموذج التعديل
+    public function edit($id)
     {
         $language = Language::findOrFail($id);
-        $languageCode = $language->code ?? 'en';
-        $name = $type;
-
-        if ($type == 'panel') {
-            $fileName = $language->panel_file ?: "{$languageCode}.json";
-            $defaultFile = base_path('resources/lang/en.json');
-        } elseif ($type == 'web') {
-            $fileName = $language->web_file ?: "{$languageCode}_web.json";
-            $defaultFile = base_path('resources/lang/en_web.json');
-        } elseif ($type == 'app') {
-            $fileName = $language->app_file ?: "{$languageCode}_app.json";
-            $defaultFile = base_path('resources/lang/en_app.json');
-        } else {
-            $fileName = 'en.json';
-            $defaultFile = base_path('resources/lang/en.json');
-        }
-
-        $jsonFile = base_path("resources/lang/{$fileName}");
-
-        if (!File::exists($jsonFile)) {
-
-            if (File::exists($defaultFile)) {
-                $defaultContent = File::get($defaultFile);
-
-            } else {
-                $defaultContent = json_encode([]);
-            }
-
-            $defaultContent=File::put($jsonFile, $defaultContent);
-
-            if ($type == 'panel') {
-                $language->panel_file = $fileName;
-            } elseif ($type == 'web') {
-                $language->web_file = $fileName;
-            } elseif ($type == 'app') {
-                $language->app_file = $fileName;
-            }
-            $language->save();
-        }
-
-        $jsonContent = File::get($jsonFile);
-        $enLabels = json_decode($jsonContent, true);
-
-        return view('backend.settings.languageedit', compact('enLabels', 'language', 'type'));
+        return view('languages.edit', compact('language'));
     }
 
-    public function updatelanguage(Request $request, $id, $type)
+    // تحديث بيانات لغة
+    public function update(Request $request, Language $language)
     {
-        $language = Language::findOrFail($id);
+        $data = $request->validated();
 
-        if ($type == 'panel') {
-            $jsonFile = base_path('resources/lang/'.$language->panel_file);
-        } elseif ($type == 'web') {
-            $jsonFile = base_path('resources/lang/'.$language->web_file);
-        } elseif ($type == 'app') {
-            $jsonFile = base_path('resources/lang/'.$language->app_file);
-        } else {
-            $jsonFile = base_path('resources/lang/en.json');
+        // تحديث الملفات
+        if ($request->hasFile('panel_file')) {
+            $data['panel_file'] = FileService::uploadLanguageFile($request->file('panel_file'), $language->code);
         }
 
-
-        $directory = dirname($jsonFile);
-        if (!File::exists($directory)) {
-            File::makeDirectory($directory, 0755, true);
+        if ($request->hasFile('app_file')) {
+            $data['app_file'] = FileService::uploadLanguageFile($request->file('app_file'), $language->code . "_app");
         }
 
-
-        if (!File::exists($jsonFile)) {
-
-            $defaultContent = [];
-            File::put($jsonFile, json_encode($defaultContent, JSON_PRETTY_PRINT));
+        if ($request->hasFile('web_file')) {
+            $data['web_file'] = FileService::uploadLanguageFile($request->file('web_file'), $language->code . "_web");
         }
-        $jsonContent = File::get($jsonFile);
-        $enLabels = json_decode($jsonContent, true);
 
-        $updatedLabels = $request->input('values');
-        $keys = array_keys($enLabels);
-        foreach ($keys as $index => $key) {
-            if (isset($updatedLabels[$index])) {
-                $enLabels[$key] = $updatedLabels[$index];
-            }
+        if ($request->hasFile('image')) {
+            $data['image'] = FileService::replace($request->file('image'), $this->uploadFolder, $language->getRawOriginal('image'));
         }
-        File::put($jsonFile, json_encode($enLabels, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
-        return ResponseService::successResponse('Json File updated successfully');
+        $language->update($data);
+
+        return response()->json([
+            'message' => 'تم تحديث اللغة بنجاح.',
+            'language' => $language
+        ]);
+    }
+    // حذف لغة
+    public function destroy(Language $language)
+    {
+        // حذف الملفات المرتبطة
+        FileService::deleteLanguageFile($language->app_file);
+        FileService::deleteLanguageFile($language->panel_file);
+        FileService::deleteLanguageFile($language->web_file);
+        FileService::delete($language->getRawOriginal('image'));
+
+        $language->delete();
+
+        return response()->json(['message' => 'تم حذف اللغة بنجاح.']);
     }
     public function fetchLanguages()
     {
