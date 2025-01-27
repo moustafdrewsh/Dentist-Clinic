@@ -13,16 +13,21 @@ return new class extends Migration
     {
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
-            $table->string('mail_mailer');
-            $table->string('mail_host');
-            $table->integer('mail_port');
-            $table->string('mail_username');
-            $table->string('mail_password');
-            $table->string('mail_from_address');
-            $table->string('mail_from_name');
-            $table->string('twilio_sid');
-            $table->string('twilio_auth_token');
-            $table->string('twilio_phone_number');        
+            $table->string('mail_mailer')->nullable();
+            $table->string('mail_host')->nullable();
+            $table->integer('mail_port')->nullable();   
+            $table->string('mail_username')->nullable();
+            $table->string('mail_password')->nullable();
+            $table->string('mail_from_address')->nullable();
+            $table->string('mail_from_name')->nullable();
+            $table->string('twilio_sid')->nullable();
+            $table->string('twilio_auth_token')->nullable();
+            $table->string('twilio_phone_number')->nullable();    
+            $table->string('slack_webhook_url')->nullable();       
+            $table->string('pusher_app_id')->nullable();
+            $table->string('pusher_app_key')->nullable();
+            $table->string('pusher_app_secret')->nullable();
+            $table->string('pusher_app_cluster')->nullable();     
             $table->timestamps();
         });
     }

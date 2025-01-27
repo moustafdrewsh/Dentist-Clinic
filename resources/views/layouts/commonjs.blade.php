@@ -4,6 +4,8 @@
 <!-- Popper JS -->
 <script src="{{ asset('assets/libs/@popperjs/core/umd/popper.min.js') }}"></script>
 
+<script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+<script src="{{ mix('js/app.js') }}"></script>
 <!-- Bootstrap JS -->
 <script src="{{ asset('assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 

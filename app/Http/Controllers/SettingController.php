@@ -9,7 +9,7 @@ class SettingController extends Controller
 {
     public function index()
     {
-        $settings = Setting::first(); // الحصول على أول إعداد (إذا كان موجودًا)
+        $settings = Setting::first(); 
         return view('admin.setting.notifactions-settings.index', compact('settings'));
     }
 
@@ -25,11 +25,16 @@ class SettingController extends Controller
             'mail_from_name' => 'required|string',
             'twilio_sid' => 'required|string',
             'twilio_auth_token' => 'required|string',
-            'twilio_phone_number' => 'required|string',  // تأكد من أن قيمة Twilio هي قيمة مرنة
+            'twilio_phone_number' => 'required|string',  
+            'slack_webhook_url' => 'required|string',
+            'pusher_app_id' => 'required|string',
+            'pusher_app_key' => 'required|string',
+            'pusher_app_secret' => 'required|string',
+            'pusher_app_cluster' => 'required|string',
         ]);
 
         $settings = Setting::updateOrCreate(
-            ['id' => 1], // إذا كان لديك فقط سجل واحد
+            ['id' => 1], 
             $request->only([
                 'mail_mailer',
                 'mail_host',
@@ -40,11 +45,15 @@ class SettingController extends Controller
                 'mail_from_name',
                 'twilio_sid',
                 'twilio_auth_token',
-                'twilio_phone_number'
+                'twilio_phone_number',
+                'slack_webhook_url',
+                'pusher_app_id',
+                'pusher_app_key',
+                'pusher_app_secret',
+                'pusher_app_cluster',
             ])
         );
 
-        // تحديث قيم ملف .env بناءً على الإعدادات
         $this->updateEnv([
             'MAIL_MAILER' => $settings->mail_mailer,
             'MAIL_HOST' => $settings->mail_host,
@@ -55,22 +64,24 @@ class SettingController extends Controller
             'MAIL_FROM_NAME' => $settings->mail_from_name,
             'TWILIO_SID' => $settings->twilio_sid,
             'TWILIO_AUTH_TOKEN' => $settings->twilio_auth_token,
-            'TWILIO_PHONE_NUMBER' => $settings->twilio_phone_number,  // تحديث رقم الهاتف من قاعدة البيانات
+            'TWILIO_PHONE_NUMBER' => $settings->twilio_phone_number, 
+            'SLACK_WEBHOOK_URL' => $settings->slack_webhook_url,
+            'PUSHER_APP_ID' => $settings->pusher_app_id,
+            'PUSHER_APP_KEY' => $settings->pusher_app_key,
+            'PUSHER_APP_SECRET' => $settings->pusher_app_secret,
+            'PUSHER_APP_CLUSTER' => $settings->pusher_app_cluster,
         ]);
 
         return redirect()->route('admin.settings.index')->with('success', 'Settings updated successfully!');
     }
 
-    // تعريف دالة تحديث .env
     private function updateEnv(array $data)
     {
         $envPath = base_path('.env');
 
-        // قراءة محتويات ملف .env
         $envContents = file_get_contents($envPath);
 
         foreach ($data as $key => $value) {
-            // البحث عن السطر الذي يحتوي على المفتاح المطلوب
             $envContents = preg_replace(
                 "/^{$key}=.*/m", 
                 "{$key}={$value}", 
@@ -78,7 +89,6 @@ class SettingController extends Controller
             );
         }
 
-        // كتابة البيانات الجديدة في ملف .env
         file_put_contents($envPath, $envContents);
     }
 }

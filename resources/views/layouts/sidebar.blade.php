@@ -36,8 +36,25 @@
                     <a href="{{ route('admin.notifications.index') }}" class="side-menu__item">إدارة الاشعارات </a>
                 </li>
                 <li class="slide">
-                    <a href="{{ route('admin.settings.index') }}" class="side-menu__item">إدارة الاعدادات </a>
+                    <a href="javascript:void(0);" class="side-menu__item" data-bs-toggle="collapse" data-bs-target="#settingsMenu">
+                        <span>الإعدادات</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" fill="#7b8191" width="24" height="24"
+                            viewBox="0 0 24 24">
+                            <path d="M10.707 17.707 16.414 12l-5.707-5.707-1.414 1.414L13.586 12l-4.293 4.293z">
+                            </path>
+                        </svg>
+                    </a>
+                    <ul class="collapse" id="settingsMenu">
+                        <li class="slide">
+                            <a href="{{ route('admin.settings.index') }}" class="side-menu__item"> الاشعارات</a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{ route('admin.socialite-settings.index') }}" class="side-menu__item"> تواصل الاجتماعي</a>
+                        </li>
+                    </ul>
                 </li>
+                
+                
                 @endrole
                
 

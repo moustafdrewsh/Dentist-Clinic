@@ -85,17 +85,22 @@
 
                         <div class="d-flex justify-content-between mt-4">
                             <button type="submit" class="btn btn-success">تحديث الإعدادات</button>
-                            
+
                             <a href="{{ route('admin.notifications.test') }}" class="btn btn-secondary">
-                          email   تجريب
-                                </a>
-                                
+                                email تجريب
+                            </a>
+
                             <a href="{{ route('admin.notifications.testsms') }}" class="btn btn-secondary">
                                 sms تجريب
-                                    </a>
-                                    
-                            <a href="{{ route('admin.notifications.index') }}" class="btn btn-secondary">رجوع إلى
-                                الإعدادات</a>
+                            </a>
+
+                            <a href="{{ route('admin.notifications.testslack') }}" class="btn btn-secondary">
+                                slack تجريب
+                            </a>
+                            <a href="{{ route('admin.notifications.testpusher') }}" class="btn btn-secondary">
+                                pusher تجريب
+                            </a>
+                            
                         </div>
                     </form>
                 </div>
@@ -114,5 +119,10 @@
                 targetElement.classList.toggle('collapse');
             });
         });
+          // اشتراك في قناة Pusher
+          Echo.channel('notifications')
+            .listen('NotificationEvent', (event) => {
+                alert(event.message); // هنا يمكنك عرض الرسالة في نافذة منبثقة
+            });
     </script>
 @endsection

@@ -66,19 +66,54 @@
                         <label for="mail_from_name" class="form-label">Mail From Name</label>
                         <input type="text" name="mail_from_name" value="{{ old('mail_from_name', $settings->mail_from_name ?? '') }}" class="form-control" required>
                     </div>
-                </form>
             </div>
         </div>
     </div>
-
+    
+    
     <div class="col-lg-6 mt-4"> <!-- عمود Twilio -->
         <div class="card custom-card">
+            
+            <div class="card-header">
+                <h3 class="card-title">إعدادات Pusher</h3>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="pusher_app_id" class="form-label">Pusher App ID</label>
+                    <input type="text" name="pusher_app_id" value="{{ old('pusher_app_id', $settings->pusher_app_id ?? '') }}" class="form-control" required>
+                </div>
+    
+                <div class="mb-3">
+                    <label for="pusher_app_key" class="form-label">Pusher App Key</label>
+                    <input type="text" name="pusher_app_key" value="{{ old('pusher_app_key', $settings->pusher_app_key ?? '') }}" class="form-control" required>
+                </div>
+    
+                <div class="mb-3">
+                    <label for="pusher_app_secret" class="form-label">Pusher App Secret</label>
+                    <input type="text" name="pusher_app_secret" value="{{ old('pusher_app_secret', $settings->pusher_app_secret ?? '') }}" class="form-control" required>
+                </div>
+    
+                <div class="mb-3">
+                    <label for="pusher_app_cluster" class="form-label">Pusher App Cluster</label>
+                    <input type="text" name="pusher_app_cluster" value="{{ old('pusher_app_cluster', $settings->pusher_app_cluster ?? '') }}" class="form-control" required>
+                </div>
+            </div>
+            <div class="card-header">
+                <h3 class="card-title">إعدادات Slack</h3>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="slack_webhook_url" class="form-label">Slack Webhook URL</label>
+                    <input type="text" name="slack_webhook_url" value="{{ old('slack_webhook_url', $settings->slack_webhook_url ?? '') }}" class="form-control" required>
+                </div>
+                
+    
+               
+            </div>
             <div class="card-header">
                 <h3 class="card-title">إعدادات Twilio</h3>
             </div>
             <div class="card-body">
-                <form action="{{ route('admin.settings.store') }}" method="POST">
-                    @csrf
                     <div class="mb-3">
                         <label for="twilio_sid" class="form-label">Twilio SID</label>
                         <input type="text" name="twilio_sid" value="{{ old('twilio_sid', $settings->twilio_sid ?? '') }}" class="form-control" required>
@@ -93,10 +128,10 @@
                         <label for="twilio_phone_number" class="form-label">Twilio Phone Number</label>
                         <input type="text" name="twilio_phone_number" value="{{ old('twilio_phone_number', $settings->twilio_phone_number ?? '') }}" class="form-control" required>
                     </div>
-
+                    
+                  
                     <div class="d-flex justify-content-between">
                         <button type="submit" class="btn btn-success">حفظ الإعدادات</button>
-                        <a href="{{ route('admin.settings.index') }}" class="btn btn-secondary">رجوع إلى الإعدادات</a>
                     </div>
                 </form>
             </div>
