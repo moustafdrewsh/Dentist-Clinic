@@ -15,20 +15,31 @@ class FileService
      * @param $folder
      * @return string
      */
-    public static function upload($requestFile, $folder)
+    public static function upload($requestFiles, $folder)
     {
-        $file_name = uniqid('', true) . time() . '.' . $requestFile->getClientOriginalExtension();
-        $folderes = 'images/' . $folder;
-        $uploadPath = public_path($folderes);
+        $uploadedFiles = [];
+        $folderPath = 'images/' . $folder;
+        $uploadPath = public_path($folderPath);
 
         if (!file_exists($uploadPath)) {
             mkdir($uploadPath, 0777, true);
         }
 
-        $requestFile->move($uploadPath, $file_name);
+        if (is_array($requestFiles)) {
+            foreach ($requestFiles as $file) {
+                $fileName = uniqid('', true) . time() . '.' . $file->getClientOriginalExtension();
+                $file->move($uploadPath, $fileName);
+                $uploadedFiles[] = $folder . '/' . $fileName;
+            }
+        } else {
+            $fileName = uniqid('', true) . time() . '.' . $requestFiles->getClientOriginalExtension();
+            $requestFiles->move($uploadPath, $fileName);
+            $uploadedFiles[] = $folder . '/' . $fileName;
+        }
 
-        return $folder . '/' . $file_name;
+        return $uploadedFiles;
     }
+
     /**
      * @param $requestFile
      * @param $code
