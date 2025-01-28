@@ -4,7 +4,7 @@ use App\Http\Controllers\Admin\RolePermissionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NotificationSettingController;
 use App\Http\Controllers\SettingController;
-
+use App\Http\Controllers\SocialiteSettingController;
 
 
 Route::prefix('admin')->middleware('auth')->group(function () {
@@ -22,13 +22,24 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     Route::get('/notifications', [NotificationSettingController::class, 'index'])->name('admin.notifications.index');
     Route::put('/notifications/update', [NotificationSettingController::class, 'update'])->name('admin.notifications.update');
+   // test
     Route::get('/notifications/test', [NotificationSettingController::class, 'test'])->name('admin.notifications.test');
     Route::get('/notifications/testsms', [NotificationSettingController::class, 'testsms'])->name('admin.notifications.testsms');
+    Route::get('/notifications/testslack', [NotificationSettingController::class, 'testslack'])->name('admin.notifications.testslack');
+    Route::get('/notifications/testpusher', [NotificationSettingController::class, 'testpusher'])->name('admin.notifications.testpusher');
 
 
+
+
+    // settings
     Route::get('settings', [SettingController::class, 'index'])->name('admin.settings.index');
     Route::post('settings/update', [SettingController::class, 'store'])->name('admin.settings.store');
+  
+    // socialite-settings
+    Route::get('socialite-settings', [SocialiteSettingController::class, 'index'])->name('admin.socialite-settings.index');
+    Route::post('socialite-settings/store', [SocialiteSettingController::class, 'store'])->name('admin.socialite-settings.store');
 
+    
     
 });
 

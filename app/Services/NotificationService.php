@@ -7,6 +7,7 @@ use App\Models\NotificationSetting;
 use App\Models\NotificationType;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use Twilio\Rest\Client;
 
 class NotificationService
@@ -17,20 +18,20 @@ class NotificationService
     public static function cheackNotfication($type, $method, $message)
     {
         $notificationType = NotificationType::where('name', $method)->first();
-    
+
         if (!$notificationType) {
             Log::error("NotificationType '{$method}' is missing in the database.");
-            return; 
+            return;
         }
-    
+
         $notificationSetting = NotificationSetting::where('notification_type_id', $notificationType->id)
             ->where('notification_type', $type)
             ->first();
-    
+
         if (!$notificationSetting) {
             NotificationSetting::updateOrCreate(
                 [
-                    'notification_type' => $type, 
+                    'notification_type' => $type,
                     'notification_type_id' => $notificationType->id,
                 ],
                 [
@@ -38,7 +39,7 @@ class NotificationService
                 ]
             );
         }
-    
+
         if ($notificationSetting && $notificationSetting->enabled) {
             if ($notificationSetting->notification_type === 'email') {
                 self::sendEmailNotificationRegister($method, $message);
@@ -48,11 +49,13 @@ class NotificationService
                 self::sendSMSNotification($toPhoneNumber, $message);
             } elseif ($notificationSetting->notification_type === 'pusher') {
                 self::sendPusherNotification(null, $message);
+            } elseif ($notificationSetting->notification_type === 'slack') {
+                self::sendSlackNotification($message);
             }
         }
     }
-    
-    
+
+
 
     // email
     public static function sendEmailNotificationRegister($type, $message)
@@ -62,13 +65,17 @@ class NotificationService
     }
 
 
+    
     // pusher
-    public static function sendPusherNotification($user, $message)
+    public static function sendPusherNotification($message)
     {
-        // تحقق مما إذا كنت تستخدم Pusher، ثم أرسل الإشعار عبر Pusher
-        // تأكد من تكامل Pusher مع التطبيق لديك
-        // مثال بسيط:
-        // broadcast(new \App\Events\NotificationEvent($user, $message)); 
+        try {
+            // بث الإشعار عبر قناة عامة أو قناة حسب الحاجة
+            broadcast(new \App\Events\NotificationEvent($message));
+            Log::info("Pusher notification sent: {$message}");
+        } catch (\Exception $e) {
+            Log::error("Failed to send Pusher notification: " . $e->getMessage());
+        }
     }
 
 
@@ -100,15 +107,38 @@ class NotificationService
         }
     }
 
+    // slack
+
+    public static function sendSlackNotification($message)
+    {
+        try {
+            $slackWebhookUrl = env('SLACK_WEBHOOK_URL');
+
+            if (!$slackWebhookUrl) {
+                throw new \Exception('Slack Webhook URL is not set in the .env file.');
+            }
+
+
+            Notification::route('slack', $slackWebhookUrl)
+                ->notify(new \App\Notifications\SlackNotification($message));
+
+            Log::info("Slack notification sent: {$message}");
+        } catch (\Exception $e) {
+            Log::error("Failed to send Slack notification: " . $e->getMessage());
+        }
+    }
+
+
+    // store Notifaction
     public static function storeNotificationType($type, $method = null)
     {
         $notificationTypeObj = NotificationType::where('name', $type)->first();
-    
+
         if (!$notificationTypeObj) {
             Log::error("NotificationType '{$type}' is missing in the database.");
             return; // لا تُنشئ القيم تلقائيًا
         }
-    
+
         NotificationSetting::updateOrCreate(
             [
                 'notification_type' => $method ?? $type,
@@ -119,7 +149,8 @@ class NotificationService
             ]
         );
     }
-    
+
+    // log
     public static function logNotification($user, $message)
     {
         Log::info("Notification sent to {$user->email}: {$message}");
