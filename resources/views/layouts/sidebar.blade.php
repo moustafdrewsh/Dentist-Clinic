@@ -36,6 +36,9 @@
                     <a href="{{ route('admin.notifications.index') }}" class="side-menu__item">إدارة الاشعارات </a>
                 </li>
                 <li class="slide">
+                    <a href="{{ route('languages.index') }}" class="side-menu__item">إدارة اللغات</a>
+                </li>
+                <li class="slide">
                     <a href="javascript:void(0);" class="side-menu__item" data-bs-toggle="collapse" data-bs-target="#settingsMenu">
                         <span>الإعدادات</span>
                         <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" fill="#7b8191" width="24" height="24"
@@ -53,13 +56,13 @@
                         </li>
                     </ul>
                 </li>
-                
-                
-                @endrole
-               
 
-              
-                 
+
+                @endrole
+
+
+
+
              </ul>
              <div class="slide-right" id="slide-right">
                  <svg xmlns="http://www.w3.org/2000/svg" fill="#7b8191" width="24" height="24"

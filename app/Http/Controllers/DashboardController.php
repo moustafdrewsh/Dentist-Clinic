@@ -8,6 +8,6 @@ class DashboardController extends Controller
 {
     public function dashboard(){
         // dd(Hash::make(123456));
- return view('panel.dashboard');
+        return view('panel.dashboard');
     }
 }

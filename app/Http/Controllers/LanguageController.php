@@ -7,6 +7,7 @@ use App\Services\FileService;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 
 class LanguageController extends Controller
 {
@@ -20,23 +21,31 @@ class LanguageController extends Controller
     public function index(Request $request)
     {
         $languages = Language::paginate(10);
-        return view('languages.index', compact('languages'));
+        return view('admin.languages.index', compact('languages'));
     }
 
     // عرض نموذج الإضافة
     public function create()
     {
-        return view('languages.create');
+        return view('admin.languages.create');
     }
 
     // تخزين لغة جديدة
     public function store(Request $request)
     {
-        $data = $request->validated();
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'name_in_english'=>'required|string|max:255',
+            'code' => 'required|string|unique:languages,code',
+            'admin_file' => 'nullable|file|mimes:json',
+            'app_file' => 'nullable|file|mimes:json',
+            'web_file' => 'nullable|file|mimes:json',
+            'image' => 'nullable|image|max:2048',
+        ]);
 
         // رفع الملفات المختلفة
-        if ($request->hasFile('panel_file')) {
-            $data['panel_file'] = FileService::uploadLanguageFile($request->file('panel_file'), $request->code);
+        if ($request->hasFile('admin_file')) {
+            $data['admin_file'] = FileService::uploadLanguageFile($request->file('admin_file'), $request->code);
         }
 
         if ($request->hasFile('app_file')) {
@@ -54,16 +63,13 @@ class LanguageController extends Controller
         // حفظ البيانات في قاعدة البيانات
         $language = Language::create($data);
 
-        return response()->json([
-            'message' => 'تم إضافة اللغة بنجاح.',
-            'language' => $language
-        ]);
+        return redirect()->route('languages.index')->with('success', 'تم إضافة اللغة بنجاح.');
     }
     // عرض نموذج التعديل
     public function edit($id)
     {
         $language = Language::findOrFail($id);
-        return view('languages.edit', compact('language'));
+        return view('admin.languages.edit', compact('language'));
     }
 
     // تحديث بيانات لغة
@@ -71,9 +77,10 @@ class LanguageController extends Controller
     {
         $data = $request->validated();
 
+
         // تحديث الملفات
-        if ($request->hasFile('panel_file')) {
-            $data['panel_file'] = FileService::uploadLanguageFile($request->file('panel_file'), $language->code);
+        if ($request->hasFile('admin_file')) {
+            $data['admin_file'] = FileService::uploadLanguageFile($request->file('admin_file'), $language->code);
         }
 
         if ($request->hasFile('app_file')) {
@@ -100,7 +107,7 @@ class LanguageController extends Controller
     {
         // حذف الملفات المرتبطة
         FileService::deleteLanguageFile($language->app_file);
-        FileService::deleteLanguageFile($language->panel_file);
+        FileService::deleteLanguageFile($language->admin_file);
         FileService::deleteLanguageFile($language->web_file);
         FileService::delete($language->getRawOriginal('image'));
 
@@ -131,4 +138,57 @@ class LanguageController extends Controller
         }
         return redirect()->back();
     }
+
+
+    public function setDefaultLanguage(Request $request) {
+        $defaultLanguage = Language::where('code', $request->language_code)->first();
+
+        if ($defaultLanguage) {
+            config(['app.locale' => $defaultLanguage->code]);
+            Session::put('default_locale', $defaultLanguage->code);
+            Session::save();
+        }
+
+        return redirect()->back()->with('success', 'Default language updated successfully!');
+    }
+
+    //add web language file to path recorse/lang
+
+
+    public function importAppLanguageFile(Request $request)
+    {
+        $data = $request->validate([
+            'app_file' => 'required|file|mimes:json',
+            'language_id' => 'required|exists:languages,id'
+        ]);
+
+        $language = Language::findOrFail($data['language_id']);
+
+        $file = $request->file('app_file');
+        $fileContent = File::get($file->getRealPath());
+        $fileContent = json_decode($fileContent, true);
+
+        // تحديد المسار لحفظ الملف داخل مجلد lang
+        $langPath = resource_path('lang');
+
+        // التأكد من وجود المجلد
+        if (!File::exists($langPath)) {
+            File::makeDirectory($langPath, 0755, true);
+        }
+
+        // اسم الملف الذي سيتم تخزينه
+        $fileName = $language->code . '.json';
+
+        // تحديد المسار الكامل لحفظ الملف
+        $filePath = $langPath . '/' . $fileName;
+
+        // حفظ الملف داخل المجلد المحدد
+        File::put($filePath, json_encode($fileContent, JSON_PRETTY_PRINT));
+
+        return redirect()->back()->with('success', 'App language file imported and saved successfully!');
+    }
+
+
+
+
 }

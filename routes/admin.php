@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\RolePermissionController;
+use App\Http\Controllers\LanguageController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NotificationSettingController;
 use App\Http\Controllers\SettingController;
@@ -28,19 +29,21 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/notifications/testslack', [NotificationSettingController::class, 'testslack'])->name('admin.notifications.testslack');
     Route::get('/notifications/testpusher', [NotificationSettingController::class, 'testpusher'])->name('admin.notifications.testpusher');
 
-
-
-
+    Route::resource('languages', LanguageController::class);
+    Route::get('/getlanguages', [LanguageController::class, 'fetchLanguages'])->name('languages.fetch.user');
+    Route::get('/language/{languageCode}', [LanguageController::class, 'setLanguage'])->name('language.set-current.user');
+    Route::post('/set-default-language', [LanguageController::class, 'setDefaultLanguage'])->name('set.default.language');
+    Route::post('/import-app-language-file', [LanguageController::class, 'importAppLanguageFile'])->name('importAppLanguageFile');
     // settings
     Route::get('settings', [SettingController::class, 'index'])->name('admin.settings.index');
     Route::post('settings/update', [SettingController::class, 'store'])->name('admin.settings.store');
-  
+
     // socialite-settings
     Route::get('socialite-settings', [SocialiteSettingController::class, 'index'])->name('admin.socialite-settings.index');
     Route::post('socialite-settings/store', [SocialiteSettingController::class, 'store'])->name('admin.socialite-settings.store');
 
-    
-    
+
+
 });
 
 // use App\Services\NotificationService;

@@ -22,7 +22,11 @@ class AuthApiController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
         if (User::where('email', $request->email)->exists()) {
-            return response()->json(['message' => 'The email is already taken.'], 420);
+            return response()->json([
+                'message' => 'The email is already taken.',
+                'data'=>null,
+                'status'=>420
+            ], 420);
         }
 
         $user = User::create([
@@ -34,8 +38,11 @@ class AuthApiController extends Controller
 
         return response()->json([
             'message' => 'Registration successful',
-            'token' => $token,
-            'user' => $user
+            'status'=>201,
+            'data'=>[
+                'token' => $token,
+                'user' => $user,
+            ]
         ], 201);
     }
 

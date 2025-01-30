@@ -3,9 +3,9 @@
 
     <ul class="sidebar-nav" id="sidebar-nav">
               @php
-         $PermissionUser = App\Models\PermissionRole::getPermission('User' , Auth::user()->role_id); 
-         $PermissionRole = App\Models\PermissionRole::getPermission('Role' , Auth::user()->role_id); 
-       $PermissionPermissions = App\Models\PermissionRole::getPermission('Permissions' , Auth::user()->role_id); 
+         $PermissionUser = App\Models\PermissionRole::getPermission('User' , Auth::user()->role_id);
+         $PermissionRole = App\Models\PermissionRole::getPermission('Role' , Auth::user()->role_id);
+       $PermissionPermissions = App\Models\PermissionRole::getPermission('Permissions' , Auth::user()->role_id);
 
               @endphp
       <li class="nav-item">
@@ -16,7 +16,7 @@
       </li><!-- End Dashboard Nav -->
 
 
-    @if(!empty($PermissionUser)) 
+    @if(!empty($PermissionUser))
       <li class="nav-item">
         <a class="nav-link @if(Request::segment(2) != 'user') collapsed @endif" href="{{url('panel/user')}}">
           <i class="bi bi-person"></i>
@@ -25,7 +25,7 @@
       </li>
     @endif
 
-    @if(!empty($PermissionRole)) 
+    @if(!empty($PermissionRole))
       <li class="nav-item">
         <a class="nav-link @if(Request::segment(2) != 'role') collapsed @endif" href="{{url('panel/role')}}">
           <i class="bi bi-person"></i>
@@ -33,7 +33,7 @@
         </a>
       </li>
       @endif
-      @if(!empty($PermissionPermissions)) 
+      @if(!empty($PermissionPermissions))
       <li class="nav-item">
         <a class="nav-link @if(Request::segment(2) != 'category') collapsed @endif" href="{{url('panel/permissions')}}">
           <i class="bi bi-person"></i>

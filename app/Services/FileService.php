@@ -29,16 +29,16 @@ class FileService
             foreach ($requestFiles as $file) {
                 $fileName = uniqid('', true) . time() . '.' . $file->getClientOriginalExtension();
                 $file->move($uploadPath, $fileName);
-                $uploadedFiles[] = $folder . '/' . $fileName;
+                $uploadedFiles[] = $folderPath . '/' . $fileName;
             }
+            return $uploadedFiles; // ✅ إرجاع مصفوفة عند رفع عدة ملفات
         } else {
             $fileName = uniqid('', true) . time() . '.' . $requestFiles->getClientOriginalExtension();
             $requestFiles->move($uploadPath, $fileName);
-            $uploadedFiles[] = $folder . '/' . $fileName;
+            return $folderPath . '/' . $fileName; // ✅ إرجاع نص عند رفع ملف واحد
         }
-
-        return $uploadedFiles;
     }
+
 
     /**
      * @param $requestFile
