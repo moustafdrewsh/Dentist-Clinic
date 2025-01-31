@@ -20,7 +20,6 @@ return new class extends Migration
             $table->string('google_id')->unique()->nullable();
             $table->string('facebook_id')->unique()->nullable();
             $table->string('whatsapp_number')->nullable()->unique();
-
             $table->rememberToken();
             $table->timestamps();
         });
