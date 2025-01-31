@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Mail\GenericNotification;
 use App\Models\NotificationSetting;
 use App\Models\NotificationType;
+use App\Models\Setting;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
@@ -111,8 +112,11 @@ class NotificationService
 
     public static function sendSlackNotification($message)
     {
+        // $settind = Setting::first();
         try {
             $slackWebhookUrl = env('SLACK_WEBHOOK_URL');
+            
+            // $slackWebhookUrl = $settind->	slack_webhook_url;
 
             if (!$slackWebhookUrl) {
                 throw new \Exception('Slack Webhook URL is not set in the .env file.');

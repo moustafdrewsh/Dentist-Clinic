@@ -20,31 +20,6 @@ Route::get('/', [AuthController::class , 'login']);
 Route::post('/', [AuthController::class , 'auth_login']);
 Route::get('/logout', [AuthController::class , 'logout']);
 
-Route::group(['middleware', 'useradmin' ] ,function(){
-
-    Route::get('/panel/dashboard', [DashboardController::class , 'dashboard']);
-    // Role
-    Route::get('/panel/role', [RoleController::class , 'list']);
-    Route::get('/panel/role/add', [RoleController::class , 'add']);
-    Route::post('/panel/role/add', [RoleController::class , 'insert']);
-    Route::get('/panel/role/edit/{id}', [RoleController::class , 'edit']);
-    Route::post('/panel/role/edit/{id}', [RoleController::class , 'update']);
-    Route::get('/panel/role/delete/{id}', [RoleController::class , 'delete']);
-
-    // user
-    Route::get('/panel/user', [UserController::class , 'list']);
-    Route::get('/panel/user/add', [UserController::class , 'add']);
-    Route::post('/panel/user/add', [UserController::class , 'insert']);
-    Route::get('/panel/user/edit/{id}', [UserController::class , 'edit']);
-    Route::post('/panel/user/edit/{id}', [UserController::class , 'update']);
-    Route::get('/panel/user/delete/{id}', [UserController::class , 'delete']);
-
-
-
-
-
-    Route::resource('/panel/permissions', PermissionController::class);
-});
 
 
 Route::get('/dashboard', function () {
@@ -62,10 +37,6 @@ Route::get('auth/google/callback', [SocialiteController::class , 'googleAuthenti
 
 Route::get('auth/facebook', [SocialiteController::class, 'facebookLogin'])->name('auth.facebook');
 Route::get('auth/facebook-callback', [SocialiteController::class, 'facebookAuthentication'])->name('auth.facebook-callback');
-
-
-
-
 
 Route::get('auth/whatsapp', [SocialiteController::class, 'showWhatsAppForm'])->name('auth.whatsapp');
 Route::post('auth/whatsapp', [SocialiteController::class, 'WhatsAppLogin'])->name('auth.whatsapp.post');
