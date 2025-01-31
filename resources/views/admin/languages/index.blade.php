@@ -54,7 +54,7 @@
                 <form action="{{ route('importAppLanguageFile') }}" method="POST" enctype="multipart/form-data" class="d-flex w-100">
                     @csrf
                     <input type="file" name="app_file" class="form-control me-2" required style="flex: 1;">
-                    <input type="hidden" name="language_id" value="{{ $language->id }}">
+                    {{-- <input type="hidden" name="language_id" value="{{ $language->id }}"> --}}
                     <button class="btn btn-primary" type="submit">Import</button>
                 </form>
             </div>

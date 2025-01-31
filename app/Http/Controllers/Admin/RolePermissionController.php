@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Language;
+use App\Models\Permission as ModelsPermission;
+use App\Models\PermissionTranslations;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Http\Request;
@@ -98,7 +100,7 @@ class RolePermissionController extends Controller
         ]);
 
         // إنشاء الصلاحية
-        $permission = Permission::create([
+        $permission = ModelsPermission::create([
             'name' => $request->name,
         ]);
 
@@ -106,9 +108,10 @@ class RolePermissionController extends Controller
         if (!empty($request->translations)) {
             foreach ($request->translations as $languageId => $name) {
                 if (!empty($name)) {
-                    $permission->translations()->create([
-                        'language_id' => $languageId,
-                        'name'        => $name,
+                    PermissionTranslations::create([
+                        'permission_id' => $permission->id,
+                        'language_id'   => $languageId,
+                        'name'          => $name,
                     ]);
                 }
             }

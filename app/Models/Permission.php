@@ -8,7 +8,7 @@ use Spatie\Permission\Models\Role;
 class Permission extends Model
 {
     use HasFactory;
-    protected $table = 'permission';
+    protected $table = 'permissions';
     protected $fillable = [
         'name',      
         'slug',     
