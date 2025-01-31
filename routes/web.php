@@ -4,11 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SocialiteController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\LanguageController;
-use App\Http\Controllers\RoleController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\PermissionController;
+use Illuminate\Support\Facades\Broadcast;
 
 
 
@@ -40,5 +36,7 @@ Route::get('auth/facebook-callback', [SocialiteController::class, 'facebookAuthe
 
 Route::get('auth/whatsapp', [SocialiteController::class, 'showWhatsAppForm'])->name('auth.whatsapp');
 Route::post('auth/whatsapp', [SocialiteController::class, 'WhatsAppLogin'])->name('auth.whatsapp.post');
+
+
 require __DIR__.'/auth.php';
 require __DIR__.'/admin.php';

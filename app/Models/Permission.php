@@ -3,6 +3,7 @@
 namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Permission\Models\Role;
 
 class Permission extends Model
 {
@@ -11,40 +12,28 @@ class Permission extends Model
     protected $fillable = [
         'name',      
         'slug',     
-        'groupby',   
     ];
 
-
-    static public function getSingle($id){
-        return Role::find($id);
+    public function translations() {
+        return $this->hasMany(PermissionTranslations::class);
     }
 
-   static public function getRecord(){
-    $getPermission = Permission::groupBy('groupby')->get();
-    $result = array();
-    foreach($getPermission as $value){
-        $getPermissionGroup = Permission::getPermissionGroup($value->groupby);
-        $data = array();
-        $data['id'] = $value->id;
-        $data['name'] = $value->name;
-        $group = array();  
-        foreach($getPermissionGroup as $valueG){
-            $dataG = array();
-            $dataG['id'] = $valueG->id;
-            $dataG['name'] = $valueG->name;
-            $group[] = $dataG; 
-        }
-
-        $data['group'] = $group; 
-        $result[] = $data;
+    public function getName($locale = 'en') {
+        $translation = $this->translations()->where('locale', $locale)->first();
+        return $translation ? $translation->name : $this->name;
     }
 
-    return $result;
-}
 
+    /// جلب كل الاobject الخاصة بالصلاحية
+//    public function getTranslatedAttributes($locale = 'en')
+//     {
+//         $translation = $this->translations()->where('locale', $locale)->first();
 
- 
-    static public function getPermissionGroup($group){
-    return  Permission::where('groupby' , '=' , $group)->get();
-    }
+//         return [
+//             'name' => $translation ? $translation->name : $this->name,
+//             'title' => $translation ? $translation->title : $this->title,
+//             'second_name' => $translation ? $translation->second_name : $this->second_name,
+//         ];
+//     }
+
 }

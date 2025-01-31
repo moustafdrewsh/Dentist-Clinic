@@ -6,7 +6,6 @@ use App\Http\Controllers\NotificationSettingController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SocialiteSettingController;
 
-
 Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('roles', [RolePermissionController::class, 'index'])->name('admin.roles.index');
     Route::get('roles/create', [RolePermissionController::class, 'createRole'])->name('admin.roles.create');
@@ -26,9 +25,9 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/notifications/test', [NotificationSettingController::class, 'test'])->name('admin.notifications.test');
     Route::get('/notifications/testsms', [NotificationSettingController::class, 'testsms'])->name('admin.notifications.testsms');
     Route::get('/notifications/testslack', [NotificationSettingController::class, 'testslack'])->name('admin.notifications.testslack');
-    Route::get('/notifications/testpusher', [NotificationSettingController::class, 'testpusher'])->name('admin.notifications.testpusher');
-
-
+    Route::get('/notifications/testpusher', [NotificationSettingController::class, 'testpusher'])
+    ->name('admin.notifications.testpusher');
+  
 
 
     // settings

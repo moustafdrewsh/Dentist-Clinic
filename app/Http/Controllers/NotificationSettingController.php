@@ -13,10 +13,7 @@ class NotificationSettingController extends Controller
 {
     public function __construct()
     {
-        // $this->middleware('role:admin');  
-        // التحقق من أن المستخدم لديه دور Admin
-
-        // تحقق من إذا كان المستخدم يمتلك دور "admin"
+        
         if (!Auth::user() || !Auth::user()->hasRole('admin')) {
             abort(403, 'Unauthorized');
         }
@@ -43,6 +40,7 @@ class NotificationSettingController extends Controller
         }
     }
 
+  
 
     public function test()
     {
@@ -64,7 +62,7 @@ class NotificationSettingController extends Controller
     public function testpusher()
     {
         NotificationService::cheackNotfication('app-pusher', 'pusher', 'لقد قمت بتسجيل الدخول بنجاح!');
-        // $this->assertTrue(true); 
+        return redirect()->route('admin.notifications.index');
 
     }
 }

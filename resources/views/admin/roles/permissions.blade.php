@@ -36,6 +36,20 @@
                         <label for="name" class="form-label">اسم الصلاحية</label>
                         <input type="text" name="name" id="name" class="form-control" required>
                     </div>
+                    @if ($languages->isNotEmpty())
+                    <hr>
+                    <h5>{{ __('Translation') . ' ' . __('Optional') }}</h5>
+                    <div class="row">
+                        @foreach ($languages as $key => $language)
+                            <div class="col-md-12 form-group">
+                                <label for="name_{{ $language->id }}" class="form-label">{{ $language->name }}</label> :
+                                </label>
+                                <input name="translations[{{ $language->id }}]" id="name_{{ $language->id }}"
+                                    class="form-control" value="">
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
                     <button type="submit" class="btn btn-success">إضافة صلاحية</button>
                 </form>
             </div>

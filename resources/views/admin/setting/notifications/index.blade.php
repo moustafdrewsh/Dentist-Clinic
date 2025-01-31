@@ -110,19 +110,4 @@
 @endsection
 
 @section('js')
-    <script>
-        // تفعيل أو إخفاء إعدادات الإشعارات عند الضغط على اسم نوع الإشعار
-        document.querySelectorAll('.toggle-settings').forEach(function(button) {
-            button.addEventListener('click', function() {
-                var targetId = this.getAttribute('data-target');
-                var targetElement = document.querySelector(targetId);
-                targetElement.classList.toggle('collapse');
-            });
-        });
-          // اشتراك في قناة Pusher
-          Echo.channel('notifications')
-            .listen('NotificationEvent', (event) => {
-                alert(event.message); // هنا يمكنك عرض الرسالة في نافذة منبثقة
-            });
-    </script>
 @endsection

@@ -71,12 +71,15 @@ class NotificationService
     public static function sendPusherNotification($message)
     {
         try {
-            // بث الإشعار عبر قناة عامة أو قناة حسب الحاجة
-            broadcast(new \App\Events\NotificationEvent($message));
-            Log::info("Pusher notification sent: {$message}");
+            broadcast(new \App\Events\NotificationEvent($message))->toOthers();
+            Log::info("Pusher notification broadcast: {$message}");
+            return true;
         } catch (\Exception $e) {
-            Log::error("Failed to send Pusher notification: " . $e->getMessage());
+            Log::error("Pusher notification failed: " . $e->getMessage());
+            return false;
         }
+        return redirect()->route('admin.notifications.index');
+
     }
 
 

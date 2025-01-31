@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Events;
 
 use Illuminate\Broadcasting\Channel;
@@ -20,11 +21,11 @@ class NotificationEvent implements ShouldBroadcast
 
     public function broadcastOn()
     {
-        return new Channel('notifications'); // قناة عامة
+        return new Channel('notifications');
     }
 
     public function broadcastAs()
     {
-        return 'notification-event'; 
+        return 'notification-event';
     }
 }
