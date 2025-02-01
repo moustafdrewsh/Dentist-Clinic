@@ -35,20 +35,10 @@ class RolePermissionController extends Controller
     {
         $permissions = Permission::all();
         $roles = Role::all();
-        
+
         return view('admin.roles.create', compact('permissions', 'roles'));
     }
 
-
-
-
-    public function permissions()
-    {
-        $roles = Role::all();
-        $languages = Language::where('code', '!=', 'en')->get();
-        $permissions = Permission::all();
-        return view('admin.roles.permissions', compact('permissions', 'roles','languages'));
-    }
 
     public function storeRole(Request $request)
     {
@@ -78,49 +68,6 @@ class RolePermissionController extends Controller
         // إعادة التوجيه مع رسالة النجاح
         return redirect()->route('admin.roles.index')->with('success', 'تم إنشاء الدور بنجاح.');
     }
-
-
-
-
-    // public function storePermission(Request $request)
-    // {
-    //     $request->validate([
-    //         'name' => 'required|unique:permissions,name',
-    //     ]);
-
-    //     Permission::create(['name' => $request->name]);
-
-    //     return redirect()->route('admin.permissions.index')->with('success', 'Permission created successfully.');
-    //  }
-
-    public function storePermission(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|unique:permissions,name',
-        ]);
-
-        // إنشاء الصلاحية
-        $permission = ModelsPermission::create([
-            'name' => $request->name,
-        ]);
-
-        // حفظ الترجمات إن وجدت
-        if (!empty($request->translations)) {
-            foreach ($request->translations as $languageId => $name) {
-                if (!empty($name)) {
-                    PermissionTranslations::create([
-                        'permission_id' => $permission->id,
-                        'language_id'   => $languageId,
-                        'name'          => $name,
-                    ]);
-                }
-            }
-        }
-
-        return redirect()->route('admin.permissions.index')->with('success', 'تم إنشاء الصلاحية بنجاح.');
-    }
-
-
     public function editRole($id)
     {
         $role = Role::findOrFail($id);
@@ -169,5 +116,101 @@ class RolePermissionController extends Controller
         $role->delete();
 
         return redirect()->route('admin.roles.index')->with('success', 'تم حذف الدور بنجاح دون التأثير على الصلاحيات.');
+    }
+
+
+
+
+    //  permissions
+
+
+    public function permissions()
+    {
+        $roles = Role::all();
+        $languages = Language::where('code', '!=', 'en')->get();
+        $permissions = Permission::all();
+        return view('admin.permissions.index', compact('permissions', 'roles', 'languages'));
+    }
+
+    public function storePermission(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|unique:permissions,name',
+        ]);
+
+        // إنشاء الصلاحية
+        $permission = ModelsPermission::create([
+            'name' => $request->name,
+        ]);
+
+        // حفظ الترجمات إن وجدت
+        if (!empty($request->translations)) {
+            foreach ($request->translations as $languageId => $name) {
+                if (!empty($name)) {
+                    PermissionTranslations::create([
+                        'permission_id' => $permission->id,
+                        'language_id'   => $languageId,
+                        'name'          => $name,
+                    ]);
+                }
+            }
+        }
+
+        return redirect()->route('admin.permissions.index')->with('success', 'تم إنشاء الصلاحية بنجاح.');
+    }
+
+
+
+    public function editPermission($id)
+    {
+        $permission = ModelsPermission::with('translations')->findOrFail($id);
+        $languages = Language::where('code', '!=', 'en')->get();
+    
+        // تجهيز الترجمات في مصفوفة ليسهل الوصول إليها
+        $translations = $permission->translations->pluck('name', 'language_id')->toArray();
+    
+        return view('admin.permissions.edit', compact('permission', 'languages', 'translations'));
+    }
+    
+    public function updatePermission(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255|unique:permissions,name,' . $id,
+        ]);
+
+        // تحديث اسم الصلاحية
+        $permission = ModelsPermission::findOrFail($id);
+        $permission->update([
+            'name' => $request->name,
+        ]);
+
+        // تحديث الترجمات إن وجدت
+        if (!empty($request->translations)) {
+            foreach ($request->translations as $languageId => $name) {
+                if (!empty($name)) {
+                    PermissionTranslations::updateOrCreate(
+                        [
+                            'permission_id' => $permission->id,
+                            'language_id' => $languageId
+                        ],
+                        [
+                            'name' => $name
+                        ]
+                    );
+                }
+            }
+        }
+
+        return redirect()->route('admin.permissions.index')->with('success', 'تم تحديث الصلاحية بنجاح.');
+    }
+
+
+    public function destroyPermission($id)
+    {
+        $permission = Permission::findOrFail($id);
+        $permission->roles()->detach();
+        PermissionTranslations::where('permission_id', $id)->delete();
+        $permission->delete();
+        return redirect()->route('admin.permissions.index')->with('success', 'تم حذف الصلاحية بنجاح.');
     }
 }

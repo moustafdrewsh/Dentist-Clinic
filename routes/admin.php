@@ -8,6 +8,9 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SocialiteSettingController;
 
 Route::prefix('admin')->middleware('auth')->group(function () {
+    
+
+    // roles
     Route::get('roles', [RolePermissionController::class, 'index'])->name('admin.roles.index');
     Route::get('roles/create', [RolePermissionController::class, 'createRole'])->name('admin.roles.create');
     Route::post('roles/store', [RolePermissionController::class, 'storeRole'])->name('admin.roles.store');
@@ -15,8 +18,12 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::put('roles/{id}/update', [RolePermissionController::class, 'updateRole'])->name('admin.roles.update');
     Route::delete('roles/{id}/delete', [RolePermissionController::class, 'destroyRole'])->name('admin.roles.destroy');
 
+    //permissions
     Route::get('permissions', [RolePermissionController::class, 'permissions'])->name('admin.permissions.index');
     Route::post('permissions/store', [RolePermissionController::class, 'storePermission'])->name('admin.permissions.store');
+    Route::get('permissions/{id}/edit', [RolePermissionController::class, 'editPermission'])->name('admin.permissions.edit');
+    Route::put('permissions/{id}', [RolePermissionController::class, 'updatePermission'])->name('admin.permissions.update');
+    Route::delete('permissions/{id}/delete', [RolePermissionController::class, 'destroyPermission'])->name('admin.permissions.destroy');
 
 
 

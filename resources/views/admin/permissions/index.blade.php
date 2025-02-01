@@ -63,15 +63,20 @@
                                 <tr>
                                     <td>{{ $permission->name }}</td>
                                     <td>
-                                        <form action="{{ route('admin.permissions.destroy', $permission->id) }}" method="POST" onsubmit="return confirm('هل أنت متأكد من حذف هذه الصلاحية؟')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm">حذف</button>
-                                        </form>
+                                        <div class="d-flex gap-2">
+                                            <a href="{{ route('admin.permissions.edit', $permission->id) }}" class="btn btn-warning btn-sm">تعديل</a>
+                        
+                                            <form action="{{ route('admin.permissions.destroy', $permission->id) }}" method="POST" onsubmit="return confirm('هل أنت متأكد من حذف هذه الصلاحية؟')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm">حذف</button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
                         </tbody>
+                        
                     </table>
                 </div>
             </div>
