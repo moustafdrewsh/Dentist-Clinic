@@ -40,7 +40,10 @@ class NotificationSettingController extends Controller
         }
     }
 
-  
+  // هنا عبارة عن اختبار لفكرة التي قمنا بتطبيقها 
+  // وهي ان يكون  لدينا نظام يشبه saas 
+  // للاشعرات لكامل الانواع 
+  // بحيث نفعل  نوع الاشعار ومااا يتضمن كل اشعار من  عدة احداث متعلقة به
 
     public function test()
     {

@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Facades\Socialite;
 class SocialiteController extends Controller
 {
+
+    // هنا تسجيل الدخول عن طريق ال goole and facebook
      // google
      public function googleLogin(){
         return Socialite::driver('google')->redirect();

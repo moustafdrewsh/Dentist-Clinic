@@ -10,9 +10,16 @@ class NotificationTypeSeeder extends Seeder
     public function run()
     {
         NotificationType::create([
-            'name' => 'app-pusher',
-            'display_name' => 'Pusher Notifications',
-            'description' => 'Real-time notifications using Pusher'
+            'name' => 'email',
+        ]);
+        NotificationType::create([
+            'name' => 'sms',
+        ]);
+        NotificationType::create([
+            'name' => 'pusher',
+        ]);
+        NotificationType::create([
+            'name' => 'slack',
         ]);
     }
 }

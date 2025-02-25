@@ -7,6 +7,8 @@ use App\Models\SocialiteSetting;
 
 class SocialiteSettingController extends Controller
 {
+
+    // هنا التحكم بمعلومات الخاص بال غوغل و لفبس بملف ال env
     public function index()
     {
         $settings = SocialiteSetting::first();

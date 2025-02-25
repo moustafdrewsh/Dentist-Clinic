@@ -43,6 +43,8 @@ class RegisteredUserController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
+                'role' => 'patient', // تعيين الدور الافتراضي للمستخدم الجديد
+
             ]);
 
 
@@ -52,7 +54,7 @@ class RegisteredUserController extends Controller
             Auth::login($user);
         
 
-            NotificationService::cheackNotfication('register', 'Welcome to our platform!');
+            NotificationService::cheackNotfication('register', 'Register', 'Welcome to our platform!');
 
 
 

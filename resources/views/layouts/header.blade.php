@@ -640,14 +640,17 @@
                             <a href="javascript:void(0);"
                                 class="header-link dropdown-toggle d-flex align-items-center" id="mainHeaderProfile"
                                 data-bs-toggle="dropdown" aria-expanded="false">
-                                <span class="me-2">
+                                <span class="me-2 position-relative">
+                                    <i
+                                        class="fa fa-user-circle fa-lg position-absolute top-50 start-50 translate-middle text-primary"></i>
                                     <img src="{{ asset('assets/images/users/21.jpg') }}" alt="img"
-                                        width="30" height="30" class="rounded-circle">
+                                        width="30" height="30" class="rounded-circle opacity-75">
                                 </span>
-                                <div class="d-xl-block d-none lh-1">
+                                <div class="d-xl-block d-none lh-1 ms-2">
                                     <h6 class="fs-13 font-weight-semibold mb-0">{{ Auth::user()->name }}</h6>
                                 </div>
                             </a>
+
                             <!-- End::header-link|dropdown-toggle -->
                             <ul class="dropdown-menu pt-0 overflow-hidden dropdown-menu-end mt-1"
                                 aria-labelledby="mainHeaderProfile">

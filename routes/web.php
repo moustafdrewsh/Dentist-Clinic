@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SocialiteController;
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\StatisticsController;
 use Illuminate\Support\Facades\Broadcast;
 
 
@@ -17,10 +19,7 @@ Route::post('/', [AuthController::class , 'auth_login']);
 Route::get('/logout', [AuthController::class , 'logout']);
 
 
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [StatisticsController::class,'index'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -40,3 +39,4 @@ Route::post('auth/whatsapp', [SocialiteController::class, 'WhatsAppLogin'])->nam
 
 require __DIR__.'/auth.php';
 require __DIR__.'/admin.php';
+require __DIR__.'/dashboard.php';

@@ -7,6 +7,9 @@ use App\Models\Setting;
 
 class SettingController extends Controller
 {
+
+    // هنا قمنا بعمل تغير ديناميكي لبعض البيانات المهمة بال .env 
+    // من الصفحات مباشرة من اجل تسهيل عال مستخدم
     public function index()
     {
         $settings = Setting::first(); 

@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NotificationSettingController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SocialiteSettingController;
+use App\Http\Controllers\Dashboard\UserController;
 
 Route::prefix('admin')->middleware('auth')->group(function () {
     
@@ -49,18 +50,12 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('socialite-settings', [SocialiteSettingController::class, 'index'])->name('admin.socialite-settings.index');
     Route::post('socialite-settings/store', [SocialiteSettingController::class, 'store'])->name('admin.socialite-settings.store');
 
+    
+   
+
 
 
 });
 
-// use App\Services\NotificationService;
-// use App\Models\NotificationSetting;
 
-// $user = auth()->user();
-// $setting = NotificationSetting::where('user_id', $user->id)
-//     ->where('notification_type', 'email')
-//     ->first();
 
-// if ($setting && $setting->enabled) {
-//     NotificationService::sendEmailNotification($user, 'Your custom message here.');
-// }

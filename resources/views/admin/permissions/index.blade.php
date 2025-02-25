@@ -61,6 +61,7 @@
                         <tbody>
                             @foreach ($permissions as $permission)
                                 <tr>
+                                    
                                     <td>{{ $permission->name }}</td>
                                     <td>
                                         <div class="d-flex gap-2">

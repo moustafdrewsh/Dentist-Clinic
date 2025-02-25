@@ -1,78 +1,136 @@
-<x-guest-layout>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<!doctype html>
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}" 
+    data-nav-layout="vertical" data-theme-mode="light" data-header-styles="light" data-menu-styles="dark">
 
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+@include('layouts.mainhead')
 
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
+<style>
+    body {
+        background: url("https://www.gph.ae/images/department/1000/dental-department-1624775519.jpg.jpg") ;
+        background-size: 100%;
+    }
+    .register-container {
+        background: rgba(255, 255, 255, 0.7);
+        /* تقليل الشفافية */
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(10px);
+        /* إضافة تأثير التمويه */
+    }
+    .login-container {
+        background: rgba(255, 255, 255, 0.9);
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required
-                autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+    .form-label {
+        display: block;
+        text-align: left;
+    }
+
+    .social-buttons {
+        display: flex;
+        gap: 10px;
+    }
+
+    .social-buttons a {
+        flex: 1;
+        height: 45px;
+        color: white;
+        border-radius: 5px;
+        text-align: center;
+        line-height: 45px;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+    .social-google {
+        background-color: #ec2c4c;
+    }
+
+    .social-facebook {
+        background-color: #2c96ec;
+    }
+
+    .social-whatsapp {
+        background-color: #3cec2c;
+    }
+</style>
+
+<body class="app sidebar-mini">
+    @include('layouts.switcher')
+    @include('layouts.loader')
+
+    <div class="page">
+        <div class="page-main d-flex align-items-center justify-content-center min-vh-100">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-8 col-lg-6 col-xl-5">
+                        <div class="text-center mb-4">
+                            <a href="index">
+                                <span class="logo-txt">Dentist Clinic</span>
+                            </a>
+                        </div>
+                        <div class="card login-container">
+                            <div class="card-body p-4">
+                                <div class="text-center mt-2">
+                                    <h5 class="text-primary">{{ __('Welcome Back !') }}</h5>
+                                    <p class="text-muted">{{ __('Sign in to continue to Dentist Clinic.') }}</p>
+                                </div>
+                                <div class="p-2 mt-4">
+                                    <form method="POST" action="{{ route('login') }}">
+                                        @csrf
+                                        <div class="mb-3">
+                                            <label class="form-label" for="email">{{ __('Email') }}</label>
+                                            <input type="email" class="form-control" id="email" name="email" 
+                                                value="{{ old('email') }}" required autofocus>
+                                            @error('email')
+                                            <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="float-end">
+                                                @if (Route::has('password.request'))
+                                                <a href="{{ route('password.request') }}" class="text-muted">{{ __('Forgot password?') }}</a>
+                                                @endif
+                                            </div>
+                                            <label class="form-label" for="password">{{ __('Password') }}</label>
+                                            <input type="password" class="form-control" id="password" name="password" required>
+                                            @error('password')
+                                            <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" id="auth-remember-check" name="remember">
+                                            <label class="form-check-label" for="auth-remember-check">{{ __('Remember me') }}</label>
+                                        </div>
+                                        <div class="mt-3 text-end">
+                                            <button class="btn btn-primary w-100" type="submit">{{ __('Log In') }}</button>
+                                        </div>
+                                        <div class="mt-4 text-center">
+                                            <p class="mb-0">{{ __('Don\'t have an account?') }} 
+                                                <a href="{{ route('register') }}" class="fw-medium text-primary"> {{ __('Signup now') }} </a>
+                                            </p>
+                                        </div>
+                                        <div class="social-buttons mt-4">
+                                            <a href="{{ route('auth.google') }}" class="social-google">{{ __('Google') }}</a>
+                                            <a href="{{ route('auth.facebook') }}" class="social-facebook">{{ __('Facebook') }}</a>
+                                            <a href="{{ route('auth.whatsapp') }}" class="social-whatsapp">{{ __('WhatsApp') }}</a>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+    </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+    <div id="responsive-overlay"></div>
+    @include('layouts.commonjs')
+</body>
 
-            <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required
-                autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-        <div class="flex  mt-6  space-x-2" style="justify-content: space-around">
-            <a href="{{ route('auth.google') }}"
-                style="    width: 130px;
-              background-color: rgb(236, 44, 76);
-                  height: 50px;"
-                class="btn btn-danger flex items-center px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
-                <i></i> <!-- أيقونة Google -->
-                تسجيل الدخول عبر Google
-            </a>
-            <a href="{{ route('auth.facebook') }}"
-                style="    width: 140px;
-                    background-color: rgb(44, 150, 236);
-                    height: 50px;"
-                class="btn  flex items-center px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
-                <i></i> <!-- أيقونة facebook -->
-                تسجيل الدخول عبر facebook
-            </a>
-            <a href="{{ route('auth.whatsapp') }}"
-            style="    width: 130px;
-              background-color: rgb(60, 236, 44);
-              height: 50px;"
-            class="btn  flex items-center px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
-            <i></i> <!-- أيقونة WatsApp -->
-            تسجيل الدخول عبر WatsApp
-        </a>
-        </div>
-
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox"
-                    class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800"
-                    name="remember">
-                <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Remember me') }}</span>
-            </label>
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
-                    href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
-
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
-        </div>
-    </form>
-    
-</x-guest-layout>
+</html>
